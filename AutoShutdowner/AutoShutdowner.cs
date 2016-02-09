@@ -11,8 +11,7 @@ namespace AutoShutdowner
     {
         readonly MainWindow _window;
         readonly Timer _shower = new Timer();//IDispose doesn't matter in this app
-        readonly Shutdowner _shutdown = new Shutdowner();
-        public Icon Icon { get; } = System.Drawing.Icon.FromHandle(AutoShutdowner.Properties.Resources.MainIcon.GetHicon());//IDispose doesn't matter in this app
+        readonly Shutdowner _shutdown;
         readonly NotifyIcon _notifyIcon = new NotifyIcon()//IDispose doesn't matter in this app
         {
             Text = "AutoShutdowner",
@@ -21,6 +20,8 @@ namespace AutoShutdowner
         private double _showAfterInterval = 2 * 60 * 60 * 1000;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool IsShutdowned { get; private set; }
 
         protected void OnPropertyChanged(string name)
         {
@@ -34,19 +35,20 @@ namespace AutoShutdowner
         public AutoShutdownerApp(MainWindow window)
         {
             _window = window;
+            _shutdown = new Shutdowner(window);
             _shower.Elapsed += showMe;
             _shower.Interval = ShowAfterInterval;
             _shower.Stop();
-            _notifyIcon.DoubleClick += (object sender, EventArgs e) => { showMe(null, null); };
-            _notifyIcon.Icon = Icon;
+            _notifyIcon.Click += (object sender, EventArgs e) => { showMe(null, null); };
+            _notifyIcon.Icon = AutoShutdowner.Properties.Resources.MainIcon;
             _shutdown.Enable = true;
         }
 
         void showMe(object sender, ElapsedEventArgs e)
         {
-            if (_window.IsShutdowned)
+            if (IsShutdowned)
                 return;
-            _window.Dispatcher.Invoke(()=>{ if(!_window.IsShutdowned) _window.Visibility = Visibility.Visible; });
+            _window.Dispatcher.Invoke(()=>{ if(!IsShutdowned) _window.Visibility = Visibility.Visible; });
             _shutdown.Enable = true;
         }
 
@@ -71,6 +73,13 @@ namespace AutoShutdowner
             _shutdown.Enable = false;
             _shower.Interval = ShowAfterInterval;
             _shower.Start();
+        }
+
+        public void Exit()
+        {
+            IsShutdowned = true;
+            _notifyIcon.Visible = false;
+            _notifyIcon.Dispose();
         }
     }
 }

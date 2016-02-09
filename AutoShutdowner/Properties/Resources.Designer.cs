@@ -61,11 +61,21 @@ namespace AutoShutdowner.Properties {
         }
         
         /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        ///   Поиск локализованного ресурса типа System.Drawing.Icon, аналогичного (Значок).
         /// </summary>
-        internal static System.Drawing.Bitmap MainIcon {
+        internal static System.Drawing.Icon MainIcon {
             get {
                 object obj = ResourceManager.GetObject("MainIcon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MainIconImage {
+            get {
+                object obj = ResourceManager.GetObject("MainIconImage", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

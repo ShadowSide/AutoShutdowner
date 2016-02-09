@@ -8,13 +8,12 @@ namespace AutoShutdowner
     public partial class MainWindow : Window
     {
         public AutoShutdownerApp App { get; set; }
-        public bool IsShutdowned { get; private set; }
         const double ChangeInterval = 0.5*60*60*1000;
         public MainWindow()
         {
             App = new AutoShutdownerApp(this);
             InitializeComponent();
-            var icon =  AutoShutdowner.Properties.Resources.MainIcon;
+            var icon =  AutoShutdowner.Properties.Resources.MainIconImage;
             Icon = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(//IDispose doesn't matter in this app
                 icon.GetHbitmap(),
                 IntPtr.Zero,
@@ -54,7 +53,7 @@ namespace AutoShutdowner
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            IsShutdowned = true;
+            App.Exit();
         }
     }
 }

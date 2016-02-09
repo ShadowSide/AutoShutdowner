@@ -9,18 +9,21 @@ namespace AutoShutdowner
     {
         readonly Timer _shutdowner = new Timer(Minutes_15);//IDispose doesn't matter in this app
         const double Minutes_15 = 15 * 60 * 1000;
-        public Shutdowner()
+        private MainWindow _window;
+
+        public Shutdowner(MainWindow window)
         {
+            _window = window;
             _shutdowner.Elapsed += (object sender, ElapsedEventArgs e) => { Shutdown(); };
         }
 
         private void Shutdown()
         {
-            var psi = new ProcessStartInfo("shutdown", "/s /t 0");
+            var psi = new ProcessStartInfo("shutdown", "/s /t 60");
             psi.CreateNoWindow = true;
             psi.UseShellExecute = false;
             Process.Start(psi);
-            Application.Current.Shutdown();
+            _window.Dispatcher.Invoke(() => { Application.Current.Shutdown(); });
         }
 
         public bool Enable
